@@ -4,10 +4,34 @@ canvas { fill-color: #ffffff; }
  * UNRELEVANT AREAS, FOR NAVIGATION
  *********************************************************************************/
 
-area[natural=wood], relation[natural=wood]
+area[natural=wood], area[landuse=forest], relation[natural=wood], relation[landuse=forest]
 {
 	z-index: 3;
-	fill-color: #c0c0c0;
+	color: #AAAAAA;
+  width: 0.5;
+  fill-image: img/fill_forest30.png;
+}
+
+relation[natural=wood] way, relation[landuse=forest] way
+{
+	z-index: 3;
+  width: 0.5;
+	color: #AAAAAA;
+}
+
+area[natural=scrub], area[natural=scree], relation[natural=scrub], relation[natural=scree]
+{
+	z-index: 3;
+	color: #AAAAAA;
+  width: 0.5;
+  fill-image: img/fill_scrub.png;
+}
+
+relation[natural=scrub] way, relation[natural=scree] way
+{
+	z-index: 3;
+  width: 0.5;
+	color: #AAAAAA;
 }
 
 area[natural=water], relation[natural=water],
@@ -35,6 +59,12 @@ area[amenity][!building], relation[amenity][!building] {
 /*********************************************************************************
  * UNRELEVANT LINES, FOR NAVIGATION
  *********************************************************************************/
+
+/* Coastline */
+way[natural=coastline] {
+  color: #AAAAAA;
+  width: 2.0;
+}
 
 /* barriers */
 way[barrier] {
@@ -70,10 +100,15 @@ line[railway=rail], line[railway=tram] {
 way|z17[railway=rail], way|z17[railway=tram] { width: 2.0; dashes: 1,2; }
 way|z18-[railway=rail], way|z18-[railway=tram] { width: 4.0; dashes: 1,4; }
 
+way[power=line] {
+  color: #000000;
+  width: 0.5;
+}
+
 /*********************************************************************************
  * BUILDINGS
  *********************************************************************************/
-area[building], relation[building] {
+area|z15-[building], relation[building] {
 	z-index: 9;
 	fill-color: #c0c0c0;
 	color: black;
@@ -83,16 +118,6 @@ area[building], relation[building] {
 relation[building] way { // Hack to make contours visible
 	color: black;
 	width: 0.5;
-}
-
-/* emphasize that the building is complete */
-area[building][addr:housenumber][building:levels], relation[building][addr:housenumber][building:levels] {
-	fill-color: #a0a0a0;
-}
-
-/* emphasize need of levels */
-area[building][!building:levels], relation[building][!building:levels] {
-	fill-color: #f0f0f0;
 }
 
 /*********************************************************************************
@@ -112,10 +137,11 @@ node|z18[addr:housenumber], area|z18[addr:housenumber] {
 }
 
 /* addresses without street show in weird color */
+/*
 node|z16-[addr:housenumber][!addr:street][!addr:place], area|z16-[addr:housenumber][!addr:street][!addr:place] {
 	text-color: #ffffff;
 	text-halo-color: #000000;
-}
+}*/
 
 /*********************************************************************************
  * HIGHWAYS
@@ -132,24 +158,23 @@ way[highway] {
 	linejoin: bevel;
 	casing-linejoin: bevel;
 	width: 1.5;
+
+// 	text: name;
+//  text-color: black;
+//  font-size: 10;
+//  text-position: line;
 }
 
-/* surfaces: unpaved */
-way[highway][surface] {
-	image: img/fill_sand_gray.png;
-	z-index: 7;
-}
-
-/* unnamed streets */
-way[highway][!name][!noname] {
-	casing-linecap: none;
-	casing-dashes: 4,4;
+way[highway=primary], way[highway=primary_link], way[highway=trunk], 
+way[highway=trunk_link], way[highway=motorway], way[highway=motorway_link] {
+	casing-width: 0.8;
+  color: #F0F0F0;
 }
 
 way|z15[highway] { width : 3.0; }
-way|z16[highway] { width : 6.0; }
-way|z17[highway] { width : 12.0; }
-way|z18-[highway] { width : 24.0; }
+way|z16[highway] { width : 5.0; }
+way|z17[highway] { width : 8.0; }
+way|z18-[highway] { width : 10.0; }
 
 /* less important highways */
 way[highway=service],
@@ -157,8 +182,7 @@ way[highway=track],
 way[highway=path],
 way[highway=footway],
 way[highway=cycleway],
-way[highway=bridleway],
-way[highway=steps] {
+way[highway=bridleway]{
 	z-index: 5;
 	width: 0.5;
 	color: #000000;
@@ -167,19 +191,47 @@ way[highway=steps] {
 	image: none;
 }
 
+way [highway=steps] {
+	z-index: 5;
+	width: 6;
+	dashes: 2,2;
+	color: #444444;
+	casing-width: 0;
+	casing-dashes: 0;
+	image: none;
+  linecap: none;
+  linejoin: bevel;
+}
+
+way|z17 [highway=steps] {
+	width: 3;
+	dashes: 1,2;
+}
+
+way|z16 [highway=steps] {
+	width: 3;
+  color: #666666;
+	dashes: 0;
+}
+
+way|z1-15 [highway=steps] {
+	width: 2;
+  color: #888888;
+	dashes: 0;
+}
+
+
 way|z16-[highway=service],
 way|z16-[highway=footway],
 way|z16-[highway=cycleway],
 way|z16-[highway=bridleway],
-way|z16-[highway=steps],
 way|z16-[highway=track] {
 	width: 1.0;
 }
 
 way[highway=footway],
 way[highway=cycleway],
-way[highway=bridleway],
-way[highway=steps] {
+way[highway=bridleway]{
 	dashes: 4,2;
 }
 
@@ -197,70 +249,7 @@ way[bridge][highway] {
 	casing-dashes: 0;
 }
 
-/*********************************************************************************
- * POIs
- *********************************************************************************/
 
-/* pois */
-node|z16-[amenity],
-node|z16-[leisure],
-node|z16-[craft],
-node|z16-[shop],
-node|z16-[office],
-node|z16-[historic],
-node|z16-[tourism],
-node|z16-[highway=bus_stop],
-node|z16-[entrance] {
-	width: 2.0;
-	color: #000000;
-	z-index: 10;
-}
-
-node|z16-[amenity][!opening_hours],
-node|z16-[leisure][!opening_hours],
-node|z16-[craft][!opening_hours],
-node|z16-[shop][!opening_hours],
-node|z16-[office][!opening_hours],
-node|z16-[historic][!name],
-node|z16-[tourism=museum][!opening_hours], node|z16-[tourism=zoo][!opening_hours], node|z16-[tourism=theme_park][!opening_hours],
-node|z16-[highway=bus_stop][!route_ref],
-node|z16-[entrance][!addr:flats] {
-	color: #ffffff;
-	casing-width: 1.0;
-	casing-color: #000000;
-}
-
-node|z17[amenity],
-node|z17[leisure],
-node|z17[craft],
-node|z17[shop],
-node|z17[office],
-node|z17[historic],
-node|z17[tourism],
-node|z17[highway=bus_stop],
-node|z17[entrance] {
-	width: 4.0;
-}
-
-node|z18-[amenity],
-node|z18-[leisure],
-node|z18-[craft],
-node|z18-[shop],
-node|z18-[office],
-node|z18-[historic],
-node|z18-[tourism],
-node|z18-[highway=bus_stop],
-node|z18-[entrance] {
-	width: 6.0;
-}
-
-node[amenity=bench],
-node[amenity=kindergarten],
-node[amenity=school] {
-	text: no_text_needed;
-	width: 0;
-	casing-width: 0;
-}
 
 /* marks */
 node|z15-16[barrier], node|z15-16[traffic_calming], node|z15-16[highway=crossing] {
